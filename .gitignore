@@ -1,0 +1,5 @@
+# igonre vim temp files
+*.swp
+
+# ignore the resulting file
+article.txt
