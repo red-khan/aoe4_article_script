@@ -22,43 +22,65 @@ c6=( $(ls -1 $path | sed 's/_/ /g' | awk '{ print $6}' | sort -u | sed ':a; N; $
 
 echo "Creating article.txt"
 for action in ${c3[@]}; do
-        printf "\n=== $action ===\n" | tee -a article.txt
+        printf "\n== $action ==\n" | tee -a article.txt
 
-        for voice in ${c4[0]}; do
-                echo "==== $voice ====" >> article.txt
-                for condition in ${c5[@]}; do
+	# Populating files of early game
+	for age in ${c5[1]}; do
 
-                        if ls "$path"/*_"$action"_"$voice"_"$condition"_* 1> /dev/null 2>&1; then
-                                echo "===== $condition =====" >> article.txt
+		if ls "$path"/*_"$action"_*_"$age"_* 1> /dev/null 2>&1; then
+			echo "=== Early game ===" >> article.txt
+		fi
+
+		for number in ${c6[@]}; do
+			result=$(find $path -type f -name "*_${action}_*_${age}_${number}_*" -printf "{{Audio|%f}} ")
+			if [[ -n $result ]]; then
+				echo "* $result'''$number'''" >> article.txt
+			fi
+		done
+	done
+
+	# Populating files of midgame
+        for age in ${c5[2]}; do
+
+                if ls "$path"/*_"$action"_*_"$age"_* 1> /dev/null 2>&1; then
+                        echo "=== Midgame ===" >> article.txt
+                fi
+
+                for number in ${c6[@]}; do
+                        result=$(find $path -type f -name "*_${action}_*_${age}_${number}_*" -printf "{{Audio|%f}} ")
+                        if [[ -n $result ]]; then
+                                echo "* $result'''$number'''" >> article.txt
                         fi
-
-                        for number in ${c6[@]}; do
-                                result=$(find $path -type f ! -name "*_istealth_*" -name "*_${action}_*_${condition}_${number}_*" -printf "{{Audio|%f}} ")
-                                if [[ -n $result ]]; then
-                                        echo "* $result'''$condition $number'''" >> article.txt
-                                fi
-                        done
                 done
         done
 
-        for voice in ${c4[2]}; do
+	#Populating files of late game
+        for age in ${c5[0]}; do
 
-		if ls "$path"/*_"$action"_"$voice"_* 1> /dev/null 2>&1; then
-                echo "==== $voice ====" >> article.txt
-		fi
+                if ls "$path"/*_"$action"_*_"$age"_* 1> /dev/null 2>&1; then
+                        echo "=== Late game ===" >> article.txt
+                fi
 
-                for condition in ${c5[@]}; do
-
-                        if ls "$path"/*_"$action"_"$voice"_"$condition"_* 1> /dev/null 2>&1; then
-                                echo "===== $condition =====" >> article.txt
+                for number in ${c6[@]}; do
+                        result=$(find $path -type f -name "*_${action}_*_${age}_${number}_*" -printf "{{Audio|%f}} ")
+                        if [[ -n $result ]]; then
+                                echo "* $result'''$number'''" >> article.txt
                         fi
+                done
+        done
 
-                        for number in ${c6[@]}; do
-                                result=$(find $path -type f -name "*_${action}_istealth_${condition}_${number}_*" -printf "{{Audio|%f}} ")
-                                if [[ -n $result ]]; then
-                                        echo "* $result'''$condition $number'''" >> article.txt
-                                fi
-                        done
+	#Populating files of cnone
+        for age in ${c5[3]}; do
+
+                if ls "$path"/*_"$action"_*_"$age"_* 1> /dev/null 2>&1; then
+                        echo "=== $age ===" >> article.txt
+                fi
+
+                for number in ${c6[@]}; do
+                        result=$(find $path -type f -name "*_${action}_*_${age}_${number}_*" -printf "{{Audio|%f}} ")
+                        if [[ -n $result ]]; then
+                                echo "* $result'''$number'''" >> article.txt
+                        fi
                 done
         done
 done
